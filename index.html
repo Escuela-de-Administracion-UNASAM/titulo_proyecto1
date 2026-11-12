@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tituladora de proyectos | Administración - UNASAM</title>
+<style>
+:root{--navy:#12345a;--blue:#1d5d91;--gold:#e5ad42;--bg:#f3f6fa;--ink:#243247}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(120deg,var(--navy),var(--blue));color:white;padding:34px 20px;text-align:center}
+header h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px)}header p{margin:0;color:#e8f1fa}
+main{max-width:1000px;margin:28px auto;padding:0 16px}
+.panel{background:white;border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 5px 22px #18324d12}
+h2{color:var(--navy);margin-top:0;font-size:21px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+label{font-weight:700;font-size:14px}input,select,textarea{font:inherit;padding:11px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #9ac4e8;border-color:var(--blue)}
+small.hint{color:#64748b}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+button{border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;font-size:14px}
+.primary{background:var(--blue);color:white}.secondary{background:#e8eef5;color:var(--navy)}button:hover{filter:brightness(.96)}
+.result{border-left:5px solid var(--gold);background:#fffaf0;padding:18px;border-radius:8px;margin-top:14px}
+#titulo{font-size:19px;font-weight:700;color:var(--navy);margin:8px 0 12px}
+.note{font-size:13px;color:#64748b}
+footer{text-align:center;padding:24px;color:#64748b;font-size:13px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Tituladora de proyectos de investigación</h1>
+  <p>Generador orientativo de títulos correlacionales y explicativos · Escuela Profesional de Administración · UNASAM</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>1. Datos de la investigación</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="nivel">Nivel o alcance</label>
+        <select id="nivel">
+          <option value="correlacional">Correlacional</option>
+          <option value="explicativo">Explicativo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="modelo">Cantidad de variables</label>
+        <select id="modelo">
+          <option value="bivariado">Bivariada (2 variables)</option>
+          <option value="multivariado">Multivariada (3 o más variables)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="v1">Variable 1</label>
+        <input id="v1" placeholder="Ej.: Gestión administrativa">
+      </div>
+      <div class="field">
+        <label for="v2">Variable 2</label>
+        <input id="v2" placeholder="Ej.: Desempeño laboral">
+      </div>
+      <div class="field" id="v3box">
+        <label for="v3">Variable 3 (si corresponde)</label>
+        <input id="v3" placeholder="Ej.: Clima organizacional">
+      </div>
+      <div class="field" id="v4box">
+        <label for="v4">Variable adicional (opcional)</label>
+        <input id="v4" placeholder="Ej.: Satisfacción laboral">
+      </div>
+      <div class="field">
+        <label for="unidad">Población, institución o unidad de análisis</label>
+        <input id="unidad" placeholder="Ej.: trabajadores de la Municipalidad Provincial">
+      </div>
+      <div class="field">
+        <label for="lugar">Lugar</label>
+        <input id="lugar" value="Huaraz, Áncash">
+      </div>
+      <div class="field">
+        <label for="periodo">Año de estudio</label>
+        <input id="periodo" value="2026">
+      </div>
+      <div class="field">
+        <label for="contexto">Contexto o sector (opcional)</label>
+        <input id="contexto" placeholder="Ej.: sector público, comercio, servicios">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="generar()">Generar título</button>
+      <button class="secondary" onclick="limpiar()">Limpiar formulario</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>2. Resultado</h2>
+    <p class="note">El título generado es una propuesta inicial. Revise que las variables, la población, el lugar y el año coincidan con su problema y objetivos de investigación.</p>
+    <div class="result" aria-live="polite">
+      <div class="note">TÍTULO PROPUESTO</div>
+      <div id="titulo">Complete los datos y seleccione “Generar título”.</div>
+      <div id="detalle" class="note"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="copiar()">Copiar título</button>
+      <button class="secondary" onclick="descargar()">Descargar resultado (.txt)</button>
+    </div>
+    <p id="mensaje" class="note" aria-live="polite"></p>
+  </section>
+
+  <section class="panel">
+    <h2>3. Orientaciones para formular el título</h2>
+    <ul>
+      <li><b>Correlacional:</b> expresa la relación o asociación entre variables. Evite afirmar causalidad.</li>
+      <li><b>Explicativo:</b> plantea la influencia o efecto de una variable sobre otra; debe ser coherente con el diseño y la evidencia que permitirá sostener esa explicación.</li>
+      <li><b>Bivariado:</b> considera dos variables principales.</li>
+      <li><b>Multivariado:</b> incorpora tres o más variables. Incluya solo las variables que formen parte real del modelo de investigación.</li>
+      <li>Procure que el título sea claro, específico y coherente con las líneas y reglamentos de investigación vigentes de la UNASAM.</li>
+    </ul>
+    <p class="note">Esta herramienta brinda sugerencias académicas generales; no reemplaza la revisión del asesor ni las directivas oficiales de la universidad.</p>
+  </section>
+</main>
+<footer>
+  Elaborado como herramienta académica de apoyo · Escuela Profesional de Administración · UNASAM<br>
+  Créditos: contenido y programación generados con apoyo de ChatGPT. Adaptar y validar según las instrucciones del docente.
+</footer>
+<script>
+const $ = id => document.getElementById(id);
+function generar(){
+  const nivel=$('nivel').value, modelo=$('modelo').value;
+  const v1=$('v1').value.trim(), v2=$('v2').value.trim();
+  const v3=$('v3').value.trim(), v4=$('v4').value.trim();
+  const unidad=$('unidad').value.trim(), lugar=$('lugar').value.trim(), periodo=$('periodo').value.trim();
+  if(!v1 || !v2 || !unidad || !lugar || !periodo){
+    $('mensaje').textContent='Por favor, complete Variable 1, Variable 2, población/unidad de análisis, lugar y año.';
+    return;
+  }
+  let variables;
+  if(modelo==='bivariado') variables=`${v1} y ${v2}`;
+  else {
+    const extras=[v3,v4].filter(Boolean);
+    if(!v3){$('mensaje').textContent='Para el modelo multivariado, ingrese al menos una tercera variable.';return;}
+    variables=[v1,v2,...extras].join(', ');
+    variables=variables.replace(/, ([^,]*)$/, ' y $1');
+  }
+  const relacion=nivel==='correlacional'?'Relación entre':'Influencia de';
+  let titulo;
+  if(nivel==='correlacional'){
+    titulo=`${relacion} ${variables} en ${unidad}, ${lugar}, ${periodo}`;
+  }else{
+    titulo=`${v1} y su influencia en ${v2}`;
+    if(modelo==='multivariado'){
+      const extras=[v3,v4].filter(Boolean);
+      if(extras.length) titulo=`${v1}, ${v3}${v4?` y ${v4}`:''}: influencia en ${v2}`;
+    }
+    titulo+=` en ${unidad}, ${lugar}, ${periodo}`;
+  }
+  $('titulo').textContent=titulo;
+  $('detalle').textContent=`Alcance ${nivel} · Diseño de variables: ${modelo==='bivariado'?'bivariado':'multivariado'}${$('contexto').value.trim()?` · Contexto: ${$('contexto').value.trim()}`:''}`;
+  $('mensaje').textContent='Título generado. Revise su coherencia metodológica antes de presentarlo.';
+}
+function limpiar(){
+  ['v1','v2','v3','v4','unidad','contexto'].forEach(id=>$(id).value='');
+  $('nivel').value='correlacional';$('modelo').value='bivariado';$('lugar').value='Huaraz, Áncash';$('periodo').value='2026';
+  $('titulo').textContent='Complete los datos y seleccione “Generar título”.';$('detalle').textContent='';$('mensaje').textContent='';
+}
+async function copiar(){
+  const t=$('titulo').textContent;
+  if(t.startsWith('Complete')){$('mensaje').textContent='Primero genere un título.';return;}
+  try{await navigator.clipboard.writeText(t);$('mensaje').textContent='Título copiado.';}
+  catch(e){$('mensaje').textContent='No se pudo copiar automáticamente. Seleccione el título y cópielo manualmente.';}
+}
+function descargar(){
+  const t=$('titulo').textContent;
+  if(t.startsWith('Complete')){$('mensaje').textContent='Primero genere un título.';return;}
+  const contenido=`TÍTULO DE INVESTIGACIÓN\n${t}\n\n${$('detalle').textContent}\n\nHerramienta académica de apoyo. Validar con el asesor y las directivas vigentes de la UNASAM.\nCréditos: generado con apoyo de ChatGPT.`;
+  const blob=new Blob([contenido],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='titulo_proyecto_UNASAM.txt';a.click();URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
